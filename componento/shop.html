@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Componento — комплектующие для ПК</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="topbar">Демо-проект: цены и наличие условные. <button id="cityBtn" class="link"></button></div>
+<header class="header">
+  <a class="logo" href="index.html" aria-label="Componento, на вводную страницу">Componento</a>
+  <input id="search" type="search" placeholder="Название, бренд, модель, сокет" aria-label="Поиск по каталогу">
+  <button id="favBtn" class="icon" aria-label="Избранное">♥ <b id="favCount">0</b></button>
+  <button id="cartBtn" class="icon" aria-label="Корзина">🛒 <b id="cartCount">0</b></button>
+  <button id="profBtn" class="icon" aria-label="Профиль">👤</button>
+  <button id="themeBtn" class="icon" aria-label="Сменить тему">◐</button>
+</header>
+<main class="layout">
+  <aside class="filters" aria-label="Фильтры">
+    <label>Категория<select id="fCat"></select></label>
+    <label>Бренд<select id="fBrand"></select></label>
+    <label>Цена от<input id="fMin" type="number" min="0" step="1000"></label>
+    <label>Цена до<input id="fMax" type="number" min="0" step="1000"></label>
+    <label>Сортировка<select id="fSort">
+      <option value="rel">По названию</option><option value="asc">Сначала дешёвые</option>
+      <option value="desc">Сначала дорогие</option></select></label>
+    <label class="chk"><input id="fFav" type="checkbox"> Только избранное</label>
+    <button id="reset" class="btn ghost">Сбросить</button>
+  </aside>
+  <section><p id="found" class="muted"></p><div id="grid" class="grid"></div></section>
+</main>
+<div id="modal" class="modal" hidden><div class="panel" role="dialog" aria-modal="true"><button id="mClose" class="icon close" aria-label="Закрыть">✕</button><div id="mBody"></div></div></div>
+<aside id="cart" class="drawer" hidden aria-label="Корзина"></aside>
+<div id="toast" class="toast" role="status"></div>
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

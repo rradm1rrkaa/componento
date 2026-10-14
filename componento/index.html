@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Componento — добро пожаловать</title><link rel="stylesheet" href="css/style.css"></head>
+<body>
+<header class="header"><span class="logo">Componento</span><span style="flex:1"></span><button id="themeBtn" class="icon" aria-label="Сменить тему">◐</button></header>
+<section class="hero"><h1>Добро пожаловать в Componento</h1>
+<p class="muted">Магазин комплектующих для ПК с понятными характеристиками, избранным, корзиной и скидками для постоянных покупателей.</p></section>
+<section class="wrap"><div class="feats">
+<div><b>Каталог и поиск</b><p class="muted">Фильтры по категории, бренду и цене, подробные характеристики по группам.</p></div>
+<div><b>Профиль и бонусы</b><p class="muted">Регистрация по почте. Чем больше покупок, тем выше скидка и бонусы.</p></div>
+<div><b>Корзина и оплата</b><p class="muted">Пересчёт суммы, отдельная страница оплаты с проверкой данных карты.</p></div></div></section>
+<section class="wrap"><h2>Отзывы покупателей</h2>
+<p class="muted">Демонстрационные отзывы: это примеры для макета, а не отзывы реальных клиентов. <b id="avg"></b></p>
+<div id="revs" class="feats"></div></section>
+<section class="cta"><a class="btn big" href="shop.html">Перейти в магазин</a></section>
+<script>
+(function(){
+var R=[['Айдар',5,'Удобно сравнивать характеристики процессоров, быстро нашёл нужную модель.'],
+['Мария',5,'Понятный каталог, фильтры работают как надо. Корзина считает всё верно.'],
+['Данияр',4,'Хороший выбор комплектующих, приятный тёмный режим.'],
+['Алина',5,'Бонусы и скидка для постоянных клиентов — отличная идея.'],
+['Ерлан',5,'Страницы товаров с подробными таблицами характеристик, всё структурировано.'],
+['Салтанат',4,'Простая регистрация и удобная оплата, интерфейс не перегружен.']];
+var box=document.getElementById('revs'),sum=0;
+R.forEach(function(r){sum+=r[1];var f=document.createElement('figure');f.className='rev';
+var s=document.createElement('div');s.className='stars';s.textContent='★'.repeat(r[1])+'☆'.repeat(5-r[1]);s.setAttribute('aria-label','Оценка '+r[1]+' из 5');
+var t=document.createElement('p');t.textContent=r[2];var n=document.createElement('b');n.textContent=r[0]+' (демо)';f.append(s,t,n);box.append(f)});
+document.getElementById('avg').textContent='Средняя оценка: '+(sum/R.length).toFixed(1)+' из 5';
+var th=localStorage.getItem('componento_theme');try{th=JSON.parse(th)}catch(e){}
+function set(t){document.documentElement.dataset.theme=t;try{localStorage.setItem('componento_theme',JSON.stringify(t))}catch(e){}}
+set(th==='dark'?'dark':'light');
+document.getElementById('themeBtn').onclick=function(){set(document.documentElement.dataset.theme==='dark'?'light':'dark')};
+})();
+</script></body></html>

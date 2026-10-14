@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Оплата — Componento</title><link rel="stylesheet" href="css/style.css"></head>
+<body>
+<header class="header"><a class="logo" href="index.html">Componento</a><span style="flex:1"></span><a class="icon" href="shop.html" style="text-decoration:none;color:inherit">← В магазин</a></header>
+<main class="pay-wrap">
+<section><h2>Ваш заказ</h2><div id="sum"></div></section>
+<section><h2>Оплата картой</h2>
+<p class="muted">Демо: платёж не выполняется, данные карты нигде не сохраняются.</p>
+<form id="payForm" class="form" novalidate>
+<label>Номер карты (16 цифр)<input id="card" type="text" inputmode="numeric" autocomplete="off" maxlength="16" placeholder="0000000000000000"></label><p class="err" id="eCard"></p>
+<label>Срок действия (ММ/ГГ)<input id="exp" type="text" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="10/29"></label><p class="err" id="eExp"></p>
+<label>CVV (3 цифры)<input id="cvv" type="password" inputmode="numeric" autocomplete="off" maxlength="3" placeholder="***"></label><p class="err" id="eCvv"></p>
+<button class="btn" type="submit" id="payBtn">Оплатить</button></form></section>
+</main>
+<script src="js/data.js"></script><script src="js/auth.js"></script><script src="js/pay.js"></script>
+</body></html>
