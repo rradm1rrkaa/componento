@@ -1,17 +1,35 @@
-<!DOCTYPE html>
-<html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Оплата — Componento</title><link rel="stylesheet" href="css/style.css"></head>
-<body>
-<header class="header"><a class="logo" href="index.html">Componento</a><span style="flex:1"></span><a class="icon" href="shop.html" style="text-decoration:none;color:inherit">← В магазин</a></header>
-<main class="pay-wrap">
-<section><h2>Ваш заказ</h2><div id="sum"></div></section>
-<section><h2>Оплата картой</h2>
-<p class="muted">Демо: платёж не выполняется, данные карты нигде не сохраняются.</p>
-<form id="payForm" class="form" novalidate>
-<label>Номер карты (16 цифр)<input id="card" type="text" inputmode="numeric" autocomplete="off" maxlength="16" placeholder="0000000000000000"></label><p class="err" id="eCard"></p>
-<label>Срок действия (ММ/ГГ)<input id="exp" type="text" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="10/29"></label><p class="err" id="eExp"></p>
-<label>CVV (3 цифры)<input id="cvv" type="password" inputmode="numeric" autocomplete="off" maxlength="3" placeholder="***"></label><p class="err" id="eCvv"></p>
-<button class="btn" type="submit" id="payBtn">Оплатить</button></form></section>
-</main>
-<script src="js/data.js"></script><script src="js/auth.js"></script><script src="js/pay.js"></script>
-</body></html>
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f7f5fc" />
+    <title>Демо-заказ — Componento</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="topbar"><span>Демо-заказ · данные останутся в этом браузере</span><button id="cityBtn" class="link" type="button">Город: Астана</button><a href="index.html">На главную</a></div>
+    <header class="site-header pay-header"><div class="header-main"><a class="logo" href="index.html"><span class="logo-mark">C</span>componento</a><span class="checkout-steps"><b>01</b> Корзина <span>›</span> <b class="current">02</b> Демо-заказ</span><a class="icon back-link" href="shop.html">← В каталог</a></div></header>
+    <main class="checkout-main">
+      <div class="breadcrumbs"><a href="shop.html">Каталог</a><span>›</span><span>Демо-заказ</span></div>
+      <div class="checkout-heading"><p class="eyebrow">ЛОКАЛЬНОЕ ОФОРМЛЕНИЕ</p><h1>Оформление демо-заказа</h1><p class="muted">Это не реальная покупка. Не вводите данные карты: оплата и отправка заказа не подключены.</p></div>
+      <div class="checkout-grid">
+        <section class="checkout-form-card"><h2>Контакт и получение</h2>
+          <form id="orderForm" class="form checkout-form" novalidate>
+            <label>Имя<input id="customerName" name="customerName" type="text" autocomplete="name" maxlength="80" required placeholder="Как к вам обращаться" /></label><p class="err" id="eName"></p>
+            <label>Телефон или другой контакт<input id="customerContact" name="customerContact" type="text" autocomplete="tel" maxlength="100" required placeholder="Например, +7 700 000 00 00" /></label><p class="err" id="eContact"></p>
+            <label>Город<input id="orderCity" name="city" type="text" maxlength="60" required /></label>
+            <label>Способ получения<select id="fulfillment" name="fulfillment"><option value="Самовывоз">Самовывоз (демо)</option><option value="Доставка">Доставка (условия не настроены)</option></select></label>
+            <label>Комментарий к заказу<textarea id="orderComment" name="comment" maxlength="500" placeholder="Необязательно"></textarea></label>
+            <label class="check-filter consent"><input id="localConsent" type="checkbox" /> Я понимаю, что это демонстрационный заказ, он не будет отправлен продавцу.</label><p class="err" id="eConsent"></p>
+            <button class="btn" id="orderBtn" type="submit">Сохранить демо-заказ</button>
+          </form>
+        </section>
+        <aside class="order-summary-card"><div class="summary-heading"><h2>Ваш заказ</h2><a href="shop.html">Вернуться в каталог</a></div><div id="sum" class="order-lines"></div><div class="order-demo-note"><span>ⓘ</span><p>Заказ и контакт будут сохранены только в локальном хранилище этого браузера. Никакая оплата не выполняется.</p></div></aside>
+      </div>
+      <section id="orderSuccess" class="order-success" hidden aria-live="polite"></section>
+    </main>
+    <footer class="site-footer compact-footer"><div class="footer-bottom"><span>Componento · демонстрационный проект</span><span>Реальный заказ не создаётся</span></div></footer>
+    <script src="js/data.js"></script><script src="js/auth.js"></script><script src="js/pay.js"></script>
+  </body>
+</html>

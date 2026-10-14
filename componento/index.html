@@ -1,34 +1,142 @@
-<!DOCTYPE html>
-<html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Componento — добро пожаловать</title><link rel="stylesheet" href="css/style.css"></head>
-<body>
-<header class="header"><span class="logo">Componento</span><span style="flex:1"></span><button id="themeBtn" class="icon" aria-label="Сменить тему">◐</button></header>
-<section class="hero"><h1>Добро пожаловать в Componento</h1>
-<p class="muted">Магазин комплектующих для ПК с понятными характеристиками, избранным, корзиной и скидками для постоянных покупателей.</p></section>
-<section class="wrap"><div class="feats">
-<div><b>Каталог и поиск</b><p class="muted">Фильтры по категории, бренду и цене, подробные характеристики по группам.</p></div>
-<div><b>Профиль и бонусы</b><p class="muted">Регистрация по почте. Чем больше покупок, тем выше скидка и бонусы.</p></div>
-<div><b>Корзина и оплата</b><p class="muted">Пересчёт суммы, отдельная страница оплаты с проверкой данных карты.</p></div></div></section>
-<section class="wrap"><h2>Отзывы покупателей</h2>
-<p class="muted">Демонстрационные отзывы: это примеры для макета, а не отзывы реальных клиентов. <b id="avg"></b></p>
-<div id="revs" class="feats"></div></section>
-<section class="cta"><a class="btn big" href="shop.html">Перейти в магазин</a></section>
-<script>
-(function(){
-var R=[['Айдар',5,'Удобно сравнивать характеристики процессоров, быстро нашёл нужную модель.'],
-['Мария',5,'Понятный каталог, фильтры работают как надо. Корзина считает всё верно.'],
-['Данияр',4,'Хороший выбор комплектующих, приятный тёмный режим.'],
-['Алина',5,'Бонусы и скидка для постоянных клиентов — отличная идея.'],
-['Ерлан',5,'Страницы товаров с подробными таблицами характеристик, всё структурировано.'],
-['Салтанат',4,'Простая регистрация и удобная оплата, интерфейс не перегружен.']];
-var box=document.getElementById('revs'),sum=0;
-R.forEach(function(r){sum+=r[1];var f=document.createElement('figure');f.className='rev';
-var s=document.createElement('div');s.className='stars';s.textContent='★'.repeat(r[1])+'☆'.repeat(5-r[1]);s.setAttribute('aria-label','Оценка '+r[1]+' из 5');
-var t=document.createElement('p');t.textContent=r[2];var n=document.createElement('b');n.textContent=r[0]+' (демо)';f.append(s,t,n);box.append(f)});
-document.getElementById('avg').textContent='Средняя оценка: '+(sum/R.length).toFixed(1)+' из 5';
-var th=localStorage.getItem('componento_theme');try{th=JSON.parse(th)}catch(e){}
-function set(t){document.documentElement.dataset.theme=t;try{localStorage.setItem('componento_theme',JSON.stringify(t))}catch(e){}}
-set(th==='dark'?'dark':'light');
-document.getElementById('themeBtn').onclick=function(){set(document.documentElement.dataset.theme==='dark'?'light':'dark')};
-})();
-</script></body></html>
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f7f5fc" />
+    <meta name="description" content="Componento — демонстрационный магазин комплектующих с подбором и проверкой сборок." />
+    <title>Componento — комплектующие и умный подбор ПК</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="topbar">
+      <span>Демонстрационный магазин · цены и ассортимент условные</span>
+      <button id="cityBtn" class="link" type="button" data-tour="city">Город: Астана</button>
+      <a href="#help">Помощь</a>
+    </div>
+
+    <header class="site-header">
+      <div class="header-main">
+        <a class="logo" href="index.html" data-tour="logo" aria-label="Componento — главная"><span class="logo-mark">C</span>componento</a>
+        <form class="site-search" action="shop.html" role="search">
+          <label class="sr-only" for="search">Поиск по товарам</label>
+          <span aria-hidden="true">⌕</span>
+          <input id="search" name="q" type="search" list="searchSuggestions" placeholder="Название, модель, характеристика" autocomplete="off" data-tour="search" />
+          <datalist id="searchSuggestions"></datalist>
+          <button type="submit" aria-label="Искать">Найти</button>
+        </form>
+        <div class="header-actions">
+          <button id="favBtn" class="header-action" type="button" aria-label="Избранное" data-tour="favorites"><span>♡</span><small>Избранное <b id="favCount">0</b></small></button>
+          <button id="compareBtn" class="header-action" type="button" aria-label="Сравнение" data-tour="comparison"><span>⇄</span><small>Сравнение <b id="compareCount">0</b></small></button>
+          <button id="cartBtn" class="header-action" type="button" aria-label="Корзина" data-tour="cart"><span>▱</span><small>Корзина <b id="cartCount">0</b></small></button>
+          <button id="profBtn" class="header-action profile-action" type="button" aria-label="Локальный профиль"><span>◉</span><small>Профиль</small></button>
+          <button id="themeBtn" class="icon theme-button" type="button" aria-label="Сменить тему" aria-pressed="false" data-tour="theme">◐</button>
+        </div>
+        <button id="mobileMenuBtn" class="icon mobile-menu-button" type="button" aria-label="Открыть меню" aria-expanded="false">☰</button>
+      </div>
+      <nav id="mainNav" class="main-nav" aria-label="Основная навигация" data-tour="navigation">
+        <a href="shop.html" data-tour="catalog">Каталог</a>
+        <a href="shop.html?category=Процессоры" data-category="Процессоры">Процессоры</a>
+        <a href="shop.html?category=Видеокарты" data-category="Видеокарты">Видеокарты</a>
+        <a href="shop.html?category=Периферия" data-category="Периферия">Периферия</a>
+        <button type="button" data-open-builds data-tour="builds">Готовые сборки</button>
+        <button type="button" data-open-consultant data-tour="consultant">Консультант</button>
+        <a href="shop.html?category=Мониторы" data-category="Мониторы">Мониторы</a>
+        <button id="startTour" type="button">Как пользоваться</button>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero-carousel" aria-label="Подбор комплектующих">
+        <div class="hero-slide active" data-slide="0">
+          <div class="hero-copy">
+            <p class="eyebrow">КОМПЬЮТЕРНАЯ ТЕХНИКА · ДЕМО-КАТАЛОГ</p>
+            <h1>Собери компьютер, который подходит именно тебе</h1>
+            <p>Подбирай комплектующие, сравнивай характеристики и проверяй совместимость до покупки.</p>
+            <div class="hero-actions"><a class="btn" href="shop.html">Открыть каталог</a><button class="btn ghost" type="button" data-open-builds>Подобрать сборку</button></div>
+            <small>Демонстрационные цены в тенге · без реальной продажи</small>
+          </div>
+          <div class="hero-art hero-art-pc" aria-hidden="true"><div class="pc-case"><span></span><i></i></div><div class="hero-orbit orbit-one"></div><div class="hero-orbit orbit-two"></div><b>BUILD<br />WITH<br />CONFIDENCE</b></div>
+        </div>
+        <div class="hero-slide" data-slide="1" hidden>
+          <div class="hero-copy"><p class="eyebrow">СОВМЕСТИМОСТЬ КОМПОНЕНТОВ</p><h2>Проверь сборку до заказа</h2><p>Локальный консультант объяснит известные ограничения по сокету, памяти, питанию и габаритам.</p><div class="hero-actions"><button class="btn" type="button" data-open-consultant>Проверить комплектующие</button><a class="btn ghost" href="shop.html">Выбрать компоненты</a></div><small>Проверка основана на демонстрационных данных и не заменяет спецификации производителя.</small></div>
+          <div class="hero-art hero-art-check" aria-hidden="true"><div class="check-card"><span>CPU</span><b>+</b><span>GPU</span><b>+</b><span>RAM</span><strong>✓</strong></div></div>
+        </div>
+        <div class="hero-slide" data-slide="2" hidden>
+          <div class="hero-copy"><p class="eyebrow">ПОДБОР ПОД ЗАДАЧУ</p><h2>Игры, работа, монтаж — начни с бюджета</h2><p>Сравни несколько вариантов сборки и посмотри, какие позиции формируют её стоимость.</p><div class="hero-actions"><button class="btn" type="button" data-open-builds>Подобрать конфигурацию</button><a class="btn ghost" href="shop.html?category=Процессоры">Перейти к процессорам</a></div><small>Стоимость рассчитана по условным ценам каталога.</small></div>
+          <div class="hero-art hero-art-budget" aria-hidden="true"><div class="budget-orb">₸</div><div class="budget-lines"><i></i><i></i><i></i></div></div>
+        </div>
+        <div class="carousel-controls"><button id="heroPrev" class="icon" type="button" aria-label="Предыдущий слайд">←</button><div id="heroDots" class="hero-dots" aria-label="Выбрать слайд"></div><button id="heroNext" class="icon" type="button" aria-label="Следующий слайд">→</button><span class="slide-count" id="slideCount">01 / 03</span></div>
+      </section>
+
+      <section class="home-section category-section">
+        <div class="section-heading"><div><p class="eyebrow">БЫСТРЫЙ ПЕРЕХОД</p><h2>Найди нужный компонент</h2></div><a href="shop.html">Весь каталог <span>→</span></a></div>
+        <div class="category-grid">
+          <a class="category-tile category-cpu" href="shop.html?category=Процессоры"><span>◉</span><strong>Процессоры</strong><small>CPU</small></a>
+          <a class="category-tile category-gpu" href="shop.html?category=Видеокарты"><span>▤</span><strong>Видеокарты</strong><small>GPU</small></a>
+          <a class="category-tile category-board" href="shop.html?category=Материнские платы"><span>▦</span><strong>Материнские платы</strong><small>Платформа</small></a>
+          <a class="category-tile category-memory" href="shop.html?category=Оперативная память"><span>▥</span><strong>Оперативная память</strong><small>RAM</small></a>
+          <a class="category-tile category-storage" href="shop.html?category=SSD"><span>▰</span><strong>Накопители</strong><small>SSD</small></a>
+          <a class="category-tile category-peripheral" href="shop.html?category=Периферия"><span>⌨</span><strong>Периферия</strong><small>Для работы и игр</small></a>
+        </div>
+      </section>
+
+      <section class="home-section">
+        <div class="section-heading"><div><p class="eyebrow">ДЕМО-АССОРТИМЕНТ</p><h2>Подборка комплектующих</h2></div><a href="shop.html">Перейти в каталог <span>→</span></a></div>
+        <div id="homePopular" class="grid product-grid-home"></div>
+      </section>
+
+      <section class="builder-callout">
+        <div><p class="eyebrow">ЛОКАЛЬНЫЙ ПОДБОРЩИК</p><h2>Какой компьютер собрать под твой бюджет?</h2><p>Укажи сумму и задачу — подборщик соберёт варианты из товаров каталога и проверит их по доступным правилам.</p><button class="btn" type="button" data-open-builds>Подобрать сборку <span>→</span></button></div>
+        <div class="builder-visual" aria-hidden="true"><span>CPU</span><i>+</i><span>GPU</span><i>+</i><span>SSD</span><b>✓</b></div>
+      </section>
+
+      <section id="recentSection" class="home-section" hidden>
+        <div class="section-heading"><div><p class="eyebrow">ВАША ИСТОРИЯ</p><h2>Недавно просмотренное</h2></div></div>
+        <div id="homeRecommended" class="grid product-grid-home"></div>
+      </section>
+
+      <section class="home-section service-section">
+        <div class="section-heading"><div><p class="eyebrow">ИНСТРУМЕНТЫ COMPONENTO</p><h2>Собирай с пониманием</h2></div></div>
+        <div class="service-grid">
+          <article><span>01</span><h3>Проверка совместимости</h3><p>Сокет, тип памяти, мощность блока питания и доступные размеры корпуса.</p><button class="text-button" type="button" data-open-consultant>Открыть консультанта →</button></article>
+          <article><span>02</span><h3>Сравнение характеристик</h3><p>Добавь товары одной категории, скрой одинаковые значения и изучи различия.</p><a class="text-button" href="shop.html">Выбрать товары →</a></article>
+          <article><span>03</span><h3>Сохранённые сборки</h3><p>Сохрани конфигурацию в браузере и вернись к ней позже на этом устройстве.</p><button class="text-button" type="button" data-open-builds>Подобрать сборку →</button></article>
+        </div>
+      </section>
+
+      <section class="home-note"><span>ⓘ</span><p><strong>О демонстрационных данных.</strong> Цены и ассортимент приведены для прототипа. Здесь нет онлайн-оплаты, серверной базы, реальных остатков, покупателей или подключённой доставки.</p></section>
+    </main>
+
+    <footer id="help" class="site-footer">
+      <div class="footer-main"><div><a class="logo" href="index.html"><span class="logo-mark">C</span>componento</a><p>Комплектующие и инструменты для вдумчивой сборки ПК.</p><small>Демонстрационный frontend-проект.</small></div>
+        <div><strong>Каталог</strong><a href="shop.html">Все товары</a><a href="shop.html?category=Процессоры">Процессоры</a><a href="shop.html?category=Видеокарты">Видеокарты</a><a href="shop.html?category=Периферия">Периферия</a></div>
+        <div><strong>Подбор</strong><button type="button" data-open-builds>Готовые сборки</button><button type="button" data-open-consultant>Консультант</button><button type="button" id="startTourFooter">Пройти обучение</button></div>
+        <div><strong>Проект</strong><span>Данные хранятся в этом браузере</span><span>Онлайн-заказ не отправляется</span><button type="button" id="cityFooter" class="text-button">Изменить город доставки</button></div>
+      </div>
+      <div class="footer-bottom"><span>© Componento · демонстрационный проект</span><span>Товары, цены, заказы и оценки условные</span></div>
+    </footer>
+
+    <div id="modal" class="modal" hidden>
+      <div class="panel" role="dialog" aria-modal="true" aria-labelledby="mBodyTitle">
+        <button id="mClose" class="icon close" type="button" aria-label="Закрыть окно">✕</button>
+        <div id="mBody"></div>
+      </div>
+    </div>
+    <aside id="cart" class="drawer" hidden aria-label="Корзина"></aside>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script src="js/data.js"></script>
+    <script src="js/product-images.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/compatibility.js"></script>
+    <script src="js/reviews.js"></script>
+    <script src="js/compare.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/builds.js"></script>
+    <script src="js/consultant.js"></script>
+    <script src="js/city.js"></script>
+    <script src="js/onboarding.js"></script>
+    <script src="js/home.js"></script>
+  </body>
+</html>

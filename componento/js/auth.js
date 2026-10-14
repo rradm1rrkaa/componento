@@ -1,57 +1,143 @@
-// Аккаунты, лояльность, заказы. MVP: всё в localStorage, пароли — только простой хэш (НЕ защита).
-(function(){
-'use strict';
-const K='componento_';
-const ls={get(k,d){try{const v=localStorage.getItem(K+k);return v===null?d:JSON.parse(v)}catch(e){return d}},
- set(k,v){try{localStorage.setItem(K+k,JSON.stringify(v))}catch(e){}}};
-const fmt=n=>new Intl.NumberFormat('ru-RU').format(n).replace(/\u00a0/g,' ')+' ₸';
-const TIERS=[[0,0,'Базовый'],[100000,3,'Серебро'],[300000,5,'Золото'],[700000,7,'Платина'],[1500000,10,'Бриллиант']];
-const BONUS_PCT=2; // 1 бонус = 1 ₸, начисляется 2% от оплаченной суммы
-function tier(spent){let i=0;TIERS.forEach((t,k)=>{if(spent>=t[0])i=k});
- const n=TIERS[i+1];return{name:TIERS[i][2],pct:TIERS[i][1],from:TIERS[i][0],next:n?{at:n[0],name:n[2],pct:n[1]}:null}}
-function hash(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return 'h'+(h>>>0).toString(16)}
-const users=()=>ls.get('users',{});
-function user(){const e=ls.get('session',null),u=users()[e];return u?Object.assign({email:e},u):null}
-function addOrder(o){
- const email=ls.get('session',null),all=users();
- if(email&&all[email]){const u=all[email];u.spent+=o.total;u.bonus=Math.max(0,u.bonus-o.bonusUsed)+Math.floor(o.total*BONUS_PCT/100);
-  u.orders.unshift(o);ls.set('users',all)}
- else{const g=ls.get('guest_orders',[]);g.unshift(o);ls.set('guest_orders',g)}}
-function h(tag,cls,text){const e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e}
-function field(label,type,name){const l=h('label',null,label),i=h('input');i.type=type;i.name=name;i.required=true;l.append(i);return l}
-function authView(b,mode){
- b.replaceChildren(h('h2',null,mode==='login'?'Вход':'Регистрация'),h('p','muted','Сейчас вы гость. Войдите или зарегистрируйтесь, чтобы получать скидки и бонусы.'));
- const tabs=h('div','tabs');
- [['login','Вход'],['reg','Регистрация']].forEach(t=>{const k=h('button','btn'+(t[0]===mode?'':' ghost'),t[1]);k.type='button';k.onclick=()=>authView(b,t[0]);tabs.append(k)});
- const f=h('form','form'),err=h('p','err');f.noValidate=true;
- const go=h('button','btn',mode==='login'?'Войти':'Создать аккаунт');go.type='submit';
- f.append(field('Почта','email','email'),field('Пароль (от 6 символов)','password','pass'),err,go);
- f.onsubmit=ev=>{ev.preventDefault();
-  const email=f.email.value.trim().toLowerCase(),pass=f.pass.value,all=users();
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){err.textContent='Введите корректную почту';return}
-  if(pass.length<6){err.textContent='Пароль — минимум 6 символов';return}
-  if(mode==='reg'){if(all[email]){err.textContent='Эта почта уже зарегистрирована. Войдите.';return}
-   all[email]={pass:hash(email+':'+pass),spent:0,bonus:0,orders:[],created:Date.now()};ls.set('users',all)}
-  else if(!all[email]||all[email].pass!==hash(email+':'+pass)){err.textContent='Неверная почта или пароль';return}
-  ls.set('session',email);profileView(b);if(window.CMP.onAuth)window.CMP.onAuth()};
- b.append(tabs,f)}
-function profileView(b){
- const u=user();if(!u){authView(b,'login');return}
- const t=tier(u.spent);
- b.replaceChildren(h('h2',null,'Профиль'),h('p','muted',u.email));
- b.append(h('p',null,'Уровень: '+t.name+' · скидка постоянного клиента '+t.pct+'%'),
-  h('p',null,'Потрачено: '+fmt(u.spent)+' · бонусы: '+fmt(u.bonus).replace('₸','')+'баллов'));
- if(t.next){const bar=h('div','bar'),i=h('i');i.style.width=Math.min(100,(u.spent-t.from)/(t.next.at-t.from)*100)+'%';bar.append(i);
-  b.append(bar,h('p','muted','До уровня «'+t.next.name+'» ('+t.next.pct+'%) осталось '+fmt(t.next.at-u.spent)))}
- b.append(h('h3',null,'История покупок'));
- if(!u.orders.length)b.append(h('p','muted','Покупок пока нет.'));
- u.orders.forEach(o=>b.append(h('p',null,o.id+' · '+new Date(o.date).toLocaleDateString('ru-RU')+' · '+fmt(o.total)+' · '+o.items.map(x=>x.name+' ×'+x.qty).join(', '))));
- b.append(h('h3',null,'Избранное'));
- const cat=window.COMPONENTO_CATALOG||[],fav=ls.get('favorites',[]).map(id=>cat.find(p=>p.id===id)).filter(Boolean);
- if(!fav.length)b.append(h('p','muted','В избранном пока пусто.'));
- fav.forEach(p=>b.append(h('p',null,p.name+' — '+fmt(p.price))));
- const out=h('button','btn ghost','Выйти');out.onclick=()=>{ls.set('session',null);authView(b,'login');if(window.CMP.onAuth)window.CMP.onAuth()};b.append(out)}
-function openProfile(){const b=document.getElementById('mBody'),m=document.getElementById('modal');if(!b||!m)return;
- user()?profileView(b):authView(b,'login');m.hidden=false}
-window.CMP={ls,fmt,tier,user,addOrder,openProfile,BONUS_PCT};
+// Shared utilities and local profile data. This demo does not create accounts
+// or collect passwords: all customer data stays in this browser.
+(function () {
+  'use strict';
+
+  const PREFIX = 'componento_';
+  const storage = {
+    get(key, fallback) {
+      try {
+        const value = localStorage.getItem(PREFIX + key);
+        return value === null ? fallback : JSON.parse(value);
+      } catch (_) {
+        return fallback;
+      }
+    },
+    set(key, value) {
+      try {
+        localStorage.setItem(PREFIX + key, JSON.stringify(value));
+        return true;
+      } catch (_) {
+        return false;
+      }
+    },
+    remove(key) {
+      try { localStorage.removeItem(PREFIX + key); } catch (_) { /* storage may be blocked */ }
+    }
+  };
+
+  const h = (tag, className, text) => {
+    const element = document.createElement(tag);
+    if (className) element.className = className;
+    if (text !== undefined && text !== null) element.textContent = text;
+    return element;
+  };
+  const fmt = value => new Intl.NumberFormat('ru-RU').format(Number(value) || 0).replace(/\u00a0/g, ' ') + ' ₸';
+  const favKey = () => 'favorites';
+  const validList = (value, max = 200) => Array.isArray(value) ? value.slice(0, max) : [];
+
+  // Preserve portable guest data from the earlier demo schema while removing
+  // its unused local account records and password hashes.
+  if ((Number(storage.get('storage_version', 1)) || 1) < 2) {
+    const favorites = validList(storage.get('favorites', []));
+    const session = storage.get('session', null);
+    const users = storage.get('users', {});
+    const legacyUser = session && users && typeof users === 'object' ? users[session] : null;
+    if (session) {
+      const oldFavorites = validList(storage.get('fav_' + session, []));
+      storage.set('favorites', [...new Set([...favorites, ...oldFavorites])]);
+    }
+    const oldOrders = validList(storage.get('guest_orders', []));
+    const userOrders = validList(legacyUser && legacyUser.orders, 50);
+    if (oldOrders.length || userOrders.length) {
+      const currentOrders = validList(storage.get('orders', []), 50);
+      const ids = new Set(currentOrders.map(order => order && order.id));
+      storage.set('orders', [...currentOrders, ...userOrders, ...oldOrders].filter(order => order && !ids.has(order.id)).slice(0, 50));
+    }
+    ['users', 'session', 'guest_orders'].forEach(key => storage.remove(key));
+    storage.set('storage_version', 2);
+  }
+
+  function profileView(container) {
+    const city = storage.get('city', 'Астана');
+    const theme = storage.get('theme', 'light') === 'dark' ? 'Тёмная' : 'Светлая';
+    const recent = validList(storage.get('recently_viewed', []), 8);
+    const favoriteIds = validList(storage.get(favKey(), []));
+    const orders = validList(storage.get('orders', []), 30);
+    const savedBuilds = validList(storage.get('saved_builds', []), 30);
+    const reviews = storage.get('reviews', {});
+    const myReviews = Object.values(reviews && typeof reviews === 'object' ? reviews : {}).flat().filter(item => item && item.local === true);
+
+    container.replaceChildren(
+      h('h2', null, 'Ваш профиль'),
+      h('p', 'muted', 'Локальный профиль этого браузера. Данные не синхронизируются между устройствами.'),
+      h('div', 'profile-grid')
+    );
+    const grid = container.lastElementChild;
+    const summary = [
+      ['Город', city], ['Тема', theme], ['Избранное', String(favoriteIds.length)],
+      ['Недавно просмотрено', String(recent.length)], ['Сохранённые сборки', String(savedBuilds.length)],
+      ['Демо-заказы', String(orders.length)], ['Ваши отзывы', String(myReviews.length)]
+    ];
+    summary.forEach(([label, value]) => {
+      const tile = h('div', 'profile-stat');
+      tile.append(h('span', 'muted', label), h('strong', null, value));
+      grid.append(tile);
+    });
+
+    const sections = [
+      ['Недавно просмотренные товары', recent.map(id => (window.COMPONENTO_CATALOG || []).find(item => item.id === id)).filter(Boolean).map(item => item.name)],
+      ['Последние демо-заказы', orders.slice(0, 5).map(order => `${order.id} · ${new Date(order.date).toLocaleDateString('ru-RU')} · ${fmt(order.total)}`)],
+      ['Сохранённые сборки', savedBuilds.map(build => `${build.name || 'Сборка'} · ${fmt((window.CMPAT && window.CMPAT.total(build.ids || {})) || 0)}`)]
+    ];
+    sections.forEach(([title, lines]) => {
+      container.append(h('h3', null, title));
+      if (!lines.length) container.append(h('p', 'muted', 'Пока здесь пусто.'));
+      lines.forEach(line => container.append(h('p', 'profile-line', line)));
+    });
+
+    const actions = h('div', 'profile-actions');
+    const cityButton = h('button', 'btn ghost', 'Изменить город');
+    cityButton.onclick = () => window.CMP.openCity && window.CMP.openCity(true);
+    const tourButton = h('button', 'btn ghost', 'Пройти обучение повторно');
+    tourButton.onclick = () => window.CMP.startTour && window.CMP.startTour(true);
+    const resetButton = h('button', 'btn danger', 'Сбросить демо-данные');
+    resetButton.onclick = () => {
+      if (!window.confirm('Будут удалены локальные избранные товары, сравнение, корзина, отзывы, город, настройки, сборки, история и демо-заказы. Продолжить?')) return;
+      const keys = ['cart', 'favorites', 'comparison', 'reviews', 'city', 'theme', 'onboarding', 'saved_builds', 'recently_viewed', 'orders', 'search_history', 'consultant'];
+      keys.forEach(key => storage.remove(key));
+      window.location.reload();
+    };
+    actions.append(cityButton, tourButton, resetButton);
+    container.append(actions, h('p', 'muted', 'Заказы, отзывы, корзина и настройки существуют только в этом браузере. Здесь нет настоящей регистрации, оплаты или серверной обработки.'));
+  }
+
+  function openProfile() {
+    const body = document.getElementById('mBody');
+    const modal = document.getElementById('modal');
+    if (!body || !modal) return;
+    profileView(body);
+    modal.hidden = false;
+    const close = document.getElementById('mClose');
+    if (close) close.focus();
+  }
+
+  function addOrder(order) {
+    const orders = validList(storage.get('orders', []), 50);
+    orders.unshift(Object.assign({ demo: true }, order));
+    storage.set('orders', orders.slice(0, 50));
+  }
+
+  window.CMP = Object.assign(window.CMP || {}, {
+    ls: storage, h, fmt, favKey, user: () => null, openProfile, addOrder,
+    profileView,
+    toast(message) {
+      const node = document.getElementById('toast');
+      if (!node) return;
+      node.textContent = message;
+      node.classList.add('show');
+      clearTimeout(window.CMP.toastTimer);
+      window.CMP.toastTimer = setTimeout(() => node.classList.remove('show'), 2400);
+    }
+  });
 })();

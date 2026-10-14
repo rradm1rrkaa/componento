@@ -1,39 +1,62 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Componento — комплектующие для ПК</title>
-<link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-<div class="topbar">Демо-проект: цены и наличие условные. <button id="cityBtn" class="link"></button></div>
-<header class="header">
-  <a class="logo" href="index.html" aria-label="Componento, на вводную страницу">Componento</a>
-  <input id="search" type="search" placeholder="Название, бренд, модель, сокет" aria-label="Поиск по каталогу">
-  <button id="favBtn" class="icon" aria-label="Избранное">♥ <b id="favCount">0</b></button>
-  <button id="cartBtn" class="icon" aria-label="Корзина">🛒 <b id="cartCount">0</b></button>
-  <button id="profBtn" class="icon" aria-label="Профиль">👤</button>
-  <button id="themeBtn" class="icon" aria-label="Сменить тему">◐</button>
-</header>
-<main class="layout">
-  <aside class="filters" aria-label="Фильтры">
-    <label>Категория<select id="fCat"></select></label>
-    <label>Бренд<select id="fBrand"></select></label>
-    <label>Цена от<input id="fMin" type="number" min="0" step="1000"></label>
-    <label>Цена до<input id="fMax" type="number" min="0" step="1000"></label>
-    <label>Сортировка<select id="fSort">
-      <option value="rel">По названию</option><option value="asc">Сначала дешёвые</option>
-      <option value="desc">Сначала дорогие</option></select></label>
-    <label class="chk"><input id="fFav" type="checkbox"> Только избранное</label>
-    <button id="reset" class="btn ghost">Сбросить</button>
-  </aside>
-  <section><p id="found" class="muted"></p><div id="grid" class="grid"></div></section>
-</main>
-<div id="modal" class="modal" hidden><div class="panel" role="dialog" aria-modal="true"><button id="mClose" class="icon close" aria-label="Закрыть">✕</button><div id="mBody"></div></div></div>
-<aside id="cart" class="drawer" hidden aria-label="Корзина"></aside>
-<div id="toast" class="toast" role="status"></div>
-<script src="js/data.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/app.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f7f5fc" />
+    <meta name="description" content="Каталог комплектующих Componento: поиск, фильтры, сравнение и подбор сборок." />
+    <title>Каталог — Componento</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="topbar"><span>Демонстрационный магазин · цены и ассортимент условные</span><button id="cityBtn" class="link" type="button" data-tour="city">Город: Астана</button><a href="index.html#help">Помощь</a></div>
+    <header class="site-header">
+      <div class="header-main">
+        <a class="logo" href="index.html" data-tour="logo" aria-label="Componento — главная"><span class="logo-mark">C</span>componento</a>
+        <form class="site-search" action="shop.html" role="search"><label class="sr-only" for="search">Поиск по товарам</label><span aria-hidden="true">⌕</span><input id="search" name="q" type="search" list="searchSuggestions" placeholder="Название, модель, характеристика" autocomplete="off" data-tour="search" /><datalist id="searchSuggestions"></datalist><button type="submit" aria-label="Искать">Найти</button></form>
+        <div class="header-actions">
+          <button id="favBtn" class="header-action" type="button" aria-label="Избранное" data-tour="favorites"><span>♡</span><small>Избранное <b id="favCount">0</b></small></button>
+          <button id="compareBtn" class="header-action" type="button" aria-label="Сравнение" data-tour="comparison"><span>⇄</span><small>Сравнение <b id="compareCount">0</b></small></button>
+          <button id="cartBtn" class="header-action" type="button" aria-label="Корзина" data-tour="cart"><span>▱</span><small>Корзина <b id="cartCount">0</b></small></button>
+          <button id="profBtn" class="header-action profile-action" type="button" aria-label="Локальный профиль"><span>◉</span><small>Профиль</small></button>
+          <button id="themeBtn" class="icon theme-button" type="button" aria-label="Сменить тему" aria-pressed="false" data-tour="theme">◐</button>
+        </div>
+        <button id="mobileMenuBtn" class="icon mobile-menu-button" type="button" aria-label="Открыть меню" aria-expanded="false">☰</button>
+      </div>
+      <nav id="mainNav" class="main-nav" aria-label="Основная навигация" data-tour="navigation">
+        <a class="active" href="shop.html" data-tour="catalog">Каталог</a><a href="shop.html?category=Процессоры" data-category="Процессоры">Процессоры</a><a href="shop.html?category=Видеокарты" data-category="Видеокарты">Видеокарты</a><a href="shop.html?category=Периферия" data-category="Периферия">Периферия</a>
+        <button type="button" data-open-builds data-tour="builds">Готовые сборки</button><button type="button" data-open-consultant data-tour="consultant">Консультант</button><a href="shop.html?category=Мониторы" data-category="Мониторы">Мониторы</a><button id="startTour" type="button">Как пользоваться</button>
+      </nav>
+    </header>
+
+    <main class="catalog-main">
+      <div class="breadcrumbs"><a href="index.html">Главная</a><span>›</span><span>Каталог</span></div>
+      <section class="catalog-intro"><div><p class="eyebrow">КОМПЛЕКТУЮЩИЕ И ПЕРИФЕРИЯ</p><h1>Каталог Componento</h1><p class="muted">Подбирай товары по категории, цене и характеристикам. Цены и ассортимент демонстрационные.</p></div><button id="mobileFiltersBtn" class="btn ghost mobile-filter-button" type="button" aria-expanded="false">Фильтры</button></section>
+      <div class="catalog-layout">
+        <aside id="filters" class="filters-panel" aria-label="Фильтры каталога">
+          <div class="filter-heading"><h2>Фильтры</h2><button id="reset" class="text-button" type="button">Сбросить</button></div>
+          <label class="filter-label">Категория<select id="fCat"></select></label>
+          <label class="filter-label">Бренд<select id="fBrand"></select></label>
+          <div class="filter-row"><label class="filter-label">Цена от, ₸<input id="fMin" type="number" min="0" step="1000" inputmode="numeric" /></label><label class="filter-label">Цена до, ₸<input id="fMax" type="number" min="0" step="1000" inputmode="numeric" /></label></div>
+          <label class="filter-label">Рейтинг<select id="fRating"><option value="0">Любой</option><option value="4">От 4 звёзд</option><option value="3">От 3 звёзд</option></select></label>
+          <label class="check-filter"><input id="fFav" type="checkbox" /> Только избранное</label>
+          <div id="specFilters" class="special-filters"></div>
+          <p class="filter-note">Рейтинги формируются только из отзывов, оставленных локально в этом браузере.</p>
+        </aside>
+        <section class="catalog-results" aria-label="Результаты каталога">
+          <div class="catalog-toolbar"><div><p class="eyebrow">РЕЗУЛЬТАТЫ ПОИСКА</p><p id="found" class="result-count" aria-live="polite"></p></div><label class="sort-label">Сортировка<select id="fSort"><option value="name">По названию</option><option value="asc">Сначала дешевле</option><option value="desc">Сначала дороже</option><option value="rating">По рейтингу</option><option value="reviews">По числу отзывов</option></select></label></div>
+          <div id="activeFilters" class="active-filters" aria-label="Активные фильтры"></div>
+          <div id="grid" class="grid catalog-grid"></div>
+          <div id="emptyResults" class="empty-state" hidden><span class="empty-icon">⌕</span><h2>Не нашли подходящие товары</h2><p class="muted">Попробуйте изменить поисковый запрос или сбросить часть фильтров.</p><button class="btn ghost" type="button" id="emptyReset">Сбросить фильтры</button></div>
+          <div id="pagination" class="pagination"></div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="site-footer"><div class="footer-main"><div><a class="logo" href="index.html"><span class="logo-mark">C</span>componento</a><p>Демонстрационный магазин компьютерных комплектующих.</p></div><div><strong>Каталог</strong><a href="shop.html">Все товары</a><a href="shop.html?category=Процессоры">Процессоры</a><a href="shop.html?category=Видеокарты">Видеокарты</a></div><div><strong>Помощь с подбором</strong><button data-open-builds type="button">Готовые сборки</button><button data-open-consultant type="button">Консультант</button><button id="startTourFooter" type="button">Пройти обучение</button></div><div><strong>Данные</strong><span>Сохраняются в этом браузере</span><span>Реальная доставка не подключена</span><button id="cityFooter" class="text-button" type="button">Изменить город</button></div></div><div class="footer-bottom"><span>© Componento · демонстрационный проект</span><span>Цены и характеристики требуют проверки перед реальным запуском</span></div></footer>
+
+    <div id="modal" class="modal" hidden><div class="panel" role="dialog" aria-modal="true" aria-labelledby="mBodyTitle"><button id="mClose" class="icon close" type="button" aria-label="Закрыть окно">✕</button><div id="mBody"></div></div></div>
+    <aside id="cart" class="drawer" hidden aria-label="Корзина"></aside><div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="js/data.js"></script><script src="js/product-images.js"></script><script src="js/auth.js"></script><script src="js/compatibility.js"></script><script src="js/reviews.js"></script><script src="js/compare.js"></script><script src="js/app.js"></script><script src="js/builds.js"></script><script src="js/consultant.js"></script><script src="js/city.js"></script><script src="js/onboarding.js"></script>
+  </body>
 </html>
